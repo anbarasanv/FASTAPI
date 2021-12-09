@@ -1,3 +1,5 @@
+"""This the main package for the application
+"""
 from fastapi import FastAPI, status, HTTPException, Depends
 from passlib.utils.decor import deprecated_function
 from sqlalchemy.orm import Session

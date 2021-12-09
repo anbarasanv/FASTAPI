@@ -1,3 +1,5 @@
+"""this the utility file for the app
+"""
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
