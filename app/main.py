@@ -16,13 +16,13 @@ app = FastAPI()
 while True:
     try:
         conn = dbc.connect(host='localhost', database='fastapi', user='postgres',
-                        password='anba', cursor_factory=RealDictCursor)
+                           password='anba', cursor_factory=RealDictCursor)
         cursor = conn.cursor()
         print("DB Connected successfully!")
         break
 
     except Exception as err:
-        print("Error while connecting to the DB:",err)
+        print("Error while connecting to the DB:", err)
         time.sleep(2)
 
 
@@ -30,11 +30,13 @@ while True:
 async def root():
     return {"message": "Hello World"}
 
+
 @app.get('/posts')
 async def get_posts(response: Response):
     cursor.execute("""SELECT * FROM posts;""")
     posts = cursor.fetchall()
     return {"posts": posts}
+
 
 @app.get('/posts/{id}', status_code=status.HTTP_200_OK)
 async def get_posts(id: int):
@@ -45,6 +47,7 @@ async def get_posts(id: int):
                             detail=f"The post id: {id} did not found")
     return {"posts": post}
 
+
 @app.post('/createposts', status_code=status.HTTP_201_CREATED)
 async def create_posts(post: Post):
     cursor.execute("""INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING *""",
@@ -53,9 +56,11 @@ async def create_posts(post: Post):
     conn.commit()
     return {"posts": new_post}
 
+
 @app.delete('/deleteposts/{id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_post(id: int):
-    cursor.execute("""DELETE FROM posts WHERE id = %s RETURNING *""", (str(id),))
+    cursor.execute(
+        """DELETE FROM posts WHERE id = %s RETURNING *""", (str(id),))
     deleted_post = cursor.fetchone()
     conn.commit()
 
@@ -63,6 +68,7 @@ async def delete_post(id: int):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"The requested id: {id} content not found")
     return {"posts": deleted_post}
+
 
 @app.put('/posts/{id}', status_code=status.HTTP_200_OK)
 async def update_post(id: int, post: Post):
@@ -74,6 +80,4 @@ async def update_post(id: int, post: Post):
     if not updated_post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"updating id: {id} not found")
-    return {"posts":updated_post}
-
-
+    return {"posts": updated_post}

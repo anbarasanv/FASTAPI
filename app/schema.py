@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import Optional
 from pydantic.networks import EmailStr
 
+
 class Post(BaseModel):
     """This class defines the schema for the Post model.
 
@@ -15,6 +16,7 @@ class Post(BaseModel):
     title: str
     content: str
     published: bool = True
+
 
 class PostResponse(Post):
     """this class defines the schema for the PostResponse model.
@@ -27,6 +29,7 @@ class PostResponse(Post):
     class Config:
         orm_mode = True
 
+
 class UserCreate(BaseModel):
     """this class defines the schema for the UserCreate model.
 
@@ -35,6 +38,7 @@ class UserCreate(BaseModel):
     """
     email: EmailStr
     password: str
+
 
 class UserResponse(BaseModel):
     """this class defines the schema for the UserResponse model.
@@ -49,6 +53,7 @@ class UserResponse(BaseModel):
     class Config:
         orm_mode = True
 
+
 class UserLogin(BaseModel):
     """this class defines the schema for the UserLogin model.
 
@@ -57,6 +62,7 @@ class UserLogin(BaseModel):
     """
     email: EmailStr
     password: str
+
 
 class Token(BaseModel):
     """this class defines the schema for the Token model.
@@ -73,5 +79,4 @@ class TokenData(BaseModel):
     Args:
         BaseModel (pydantic BaseModel): The base model for the Post model.
     """
-    id : Optional[str] = None
-
+    id: Optional[str] = None
