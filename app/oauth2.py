@@ -16,7 +16,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES')
 def get_accesss_token(data: dict):
     to_encode = data.copy()
 
-    expire = datetime.now() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.utcnow() + timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({'exp': expire})
 
     jwt_token = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
@@ -31,9 +31,10 @@ def verify_accesss_token(token: str, credential_exception):
 
         if id is None:
             raise credential_exception
-        token_data = schemas.TokenData(id=id)
+        token_data = schema.TokenData(id=id)
     except JWTError:
         raise credential_exception
+    return token_data
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
