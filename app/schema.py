@@ -64,8 +64,9 @@ class Token(BaseModel):
     Args:
         BaseModel (pydantic BaseModel): This is the base model for the Token model.
     """
-    accss_token : str
-    token_type : str
+    access_token: str
+    token_type: str
+
 
 class TokenData(BaseModel):
     """this class defines the schema for the TokenData model.
