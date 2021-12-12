@@ -2,6 +2,7 @@ from typing import List
 
 from fastapi import Depends, HTTPException, status, APIRouter
 from sqlalchemy.orm import Session
+from starlette.responses import Response
 
 
 from .. import models
@@ -35,7 +36,7 @@ async def create_posts(
     db: Session = Depends(get_db),
     current_user: int = Depends(get_current_user),
 ):
-    new_post = models.Post(**post.dict())
+    new_post = models.Post(owner_id=current_user.id, **post.dict())
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
@@ -50,16 +51,20 @@ async def delete_post(
     current_user: int = Depends(get_current_user),
 ):
     post = db.query(models.Post).filter(models.Post.id == id)
-    ret_data = post.first()
     if not post.first():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"The requested id: {id} content not found",
         )
+    if post.first().owner_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"The requested id: {id} is not owned by you",
+        )
     post.delete(synchronize_session=False)
     db.commit()
-    # db.refresh(ret_data)
-    return ret_data
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.put("/{id}", status_code=status.HTTP_200_OK, response_model=PostResponse)
@@ -70,12 +75,15 @@ async def update_post(
     current_user: int = Depends(get_current_user),
 ):
     post_data = db.query(models.Post).filter(models.Post.id == id)
-    ret_data = post_data.first()
     if not post_data.first():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"updating id: {id} not found"
         )
+    if post_data.first().owner_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"The requested id: {id} is not owned by you",
+        )
     post_data.update(post.dict(), synchronize_session=False)
     db.commit()
-    db.refresh(ret_data)
-    return ret_data
+    return post_data.first()

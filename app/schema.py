@@ -7,35 +7,13 @@ from typing import Optional
 from pydantic.networks import EmailStr
 
 
-class Post(BaseModel):
-    """This class defines the schema for the Post model.
-
-    Args:
-        BaseModel (pydantic BaseModel): The base model for the Post model.
-    """
-    title: str
-    content: str
-    published: bool = True
-
-
-class PostResponse(Post):
-    """this class defines the schema for the PostResponse model.
-
-    Args:
-        Post (pydantic BaseModel): The base model for the PostResponse model.
-    """
-    created_at: datetime
-
-    class Config:
-        orm_mode = True
-
-
 class UserCreate(BaseModel):
     """this class defines the schema for the UserCreate model.
 
     Args:
         BaseModel (pydantic BaseModel): This is the base model for the UserCreate model.
     """
+
     email: EmailStr
     password: str
 
@@ -46,6 +24,7 @@ class UserResponse(BaseModel):
     Args:
         BaseModel (pydantic BaseModel): This is the base model for the UserResponse model.
     """
+
     id: int
     email: EmailStr
     created_at: datetime
@@ -60,8 +39,36 @@ class UserLogin(BaseModel):
     Args:
         BaseModel (pydantic BaseModel): This is the base model for the UserLogin model.
     """
+
     email: EmailStr
     password: str
+
+
+class Post(BaseModel):
+    """This class defines the schema for the Post model.
+
+    Args:
+        BaseModel (pydantic BaseModel): The base model for the Post model.
+    """
+
+    title: str
+    content: str
+    published: bool = True
+
+
+class PostResponse(Post):
+    """this class defines the schema for the PostResponse model.
+
+    Args:
+        Post (pydantic BaseModel): The base model for the PostResponse model.
+    """
+
+    id: int
+    created_at: datetime
+    owner: UserResponse
+
+    class Config:
+        orm_mode = True
 
 
 class Token(BaseModel):
@@ -70,6 +77,7 @@ class Token(BaseModel):
     Args:
         BaseModel (pydantic BaseModel): This is the base model for the Token model.
     """
+
     access_token: str
     token_type: str
 
@@ -79,4 +87,5 @@ class TokenData(BaseModel):
     Args:
         BaseModel (pydantic BaseModel): The base model for the Post model.
     """
+
     id: Optional[str] = None
