@@ -9,9 +9,7 @@
             "type"      : "python",
             "request"   : "launch",
             "module"    : "uvicorn",
-            "args"      : [
-                "app.mainalchemy:app"
-            ],
+            "args"      : ["app.main:app"],
             "jinja"     : true,
             "justMyCode": true,
         }
