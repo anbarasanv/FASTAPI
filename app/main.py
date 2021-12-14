@@ -1,13 +1,9 @@
 """This the main package for the application
 """
-from fastapi import FastAPI, status, HTTPException, Depends
-from passlib.utils.decor import deprecated_function
-from sqlalchemy.orm import Session
-from typing import List
+from fastapi import FastAPI
+from fastapi.params import Depends
 from . import models
-from .database import engine, get_db
-from .schema import Post, PostResponse, UserCreate, UserResponse
-from . import utility
+from .database import engine
 from .routers import user, post, auth
 
 # This line creates the required database tables,if not exists already
