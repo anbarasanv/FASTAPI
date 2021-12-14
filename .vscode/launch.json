@@ -13,5 +13,6 @@
             "jinja"     : true,
             "justMyCode": true,
         }
-    ]
+    ],
+    "python.terminal.activateEnvironment": true
 }
