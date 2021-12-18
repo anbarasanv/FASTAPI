@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 from pydantic.networks import EmailStr
+from pydantic.types import conint
 
 
 class UserCreate(BaseModel):
@@ -71,6 +72,20 @@ class PostResponse(Post):
         orm_mode = True
 
 
+class PostOut(BaseModel):
+    """this class defines the schema for the PosOut model.
+
+    Args:
+        Post (pydantic BaseModel): The base model for the PosOut model.
+    """
+
+    Post: PostResponse
+    votes: int
+
+    class Config:
+        orm_mode = True
+
+
 class Token(BaseModel):
     """this class defines the schema for the Token model.
 
@@ -89,3 +104,14 @@ class TokenData(BaseModel):
     """
 
     id: Optional[str] = None
+
+
+class Vote(BaseModel):
+    """this class defines the schema for the Vote model.
+
+    Args:
+        BaseModel (pydantic BaseModel): The base model for the Vote model.
+    """
+
+    post_id: int
+    direction: conint(ge=0, le=1)

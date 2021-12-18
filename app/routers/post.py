@@ -1,19 +1,22 @@
 from typing import List, Optional
+from sqlalchemy import func
 
 from fastapi import Depends, HTTPException, status, APIRouter
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.expression import join
+from sqlalchemy.sql.functions import mode
 from starlette.responses import Response
 
 
 from .. import models
 from ..database import get_db
-from ..schema import Post, PostResponse
+from ..schema import Post, PostOut, PostResponse
 from ..oauth2 import get_current_user
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
 
 
-@router.get("/", response_model=List[PostResponse])
+@router.get("/", response_model=List[PostOut])
 async def get_posts(
     db: Session = Depends(get_db),
     current_user: int = Depends(get_current_user),
@@ -22,7 +25,11 @@ async def get_posts(
     search: Optional[str] = "",
 ):
     posts = (
-        db.query(models.Post)
+        (
+            db.query(models.Post, func.count(models.Vote.post_id).label("votes"))
+            .join(models.Vote, models.Post.id == models.Vote.post_id, isouter=True)
+            .group_by(models.Post.id)
+        )
         .filter(models.Post.title.contains(search))
         .limit(limit)
         .offset(offset)
@@ -31,7 +38,7 @@ async def get_posts(
     return posts
 
 
-@router.get("/{id}", status_code=status.HTTP_200_OK, response_model=PostResponse)
+@router.get("/{id}", status_code=status.HTTP_200_OK, response_model=PostOut)
 async def get_posts(
     id: int,
     db: Session = Depends(get_db),
@@ -39,7 +46,13 @@ async def get_posts(
     limit: int = 10,
     offset: int = 0,
 ):
-    post = db.query(models.Post).filter(models.Post.id == id).first()
+    post = (
+        db.query(models.Post, func.count(models.Vote.post_id).label("votes"))
+        .join(models.Vote, models.Vote.post_id == models.Post.id, isouter=True)
+        .group_by(models.Post.id)
+        .filter(models.Post.id == id)
+        .first()
+    )
     if not post:
         raise HTTPException(
             status_code=status.HTTP_204_NO_CONTENT,
