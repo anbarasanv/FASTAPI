@@ -11,11 +11,11 @@ from .config import settings
 
 # load_dotenv()
 # connection string format:  'postgresql://<user_name>:<password>@<ip or hostname>/<db_name>
-# SQL_ALCHEMY_DATABASE_URL = os.getenv("SQL_ALCHEMY_DATABASE_URL")
+# DATABASE_URL = os.getenv("DATABASE_URL")
 
-SQL_ALCHEMY_DATABASE_URL = settings.SQL_ALCHEMY_DATABASE_URL
+DATABASE_URL = settings.DATABASE_URL
 
-engine = create_engine(SQL_ALCHEMY_DATABASE_URL)
+engine = create_engine(DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

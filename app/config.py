@@ -7,7 +7,7 @@ from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-    SQL_ALCHEMY_DATABASE_URL: str
+    DATABASE_URL: str
     SECRET_KEY: str
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
