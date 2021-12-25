@@ -11,11 +11,11 @@ from .config import settings
 
 # load_dotenv()
 # connection string format:  'postgresql://<user_name>:<password>@<ip or hostname>/<db_name>
-# DATABASE_URL = os.getenv("DATABASE_URL")
+# POSTGRES_DATABASE_URL = os.getenv("POSTGRES_DATABASE_URL")
 
-DATABASE_URL = settings.DATABASE_URL
+POSTGRES_DATABASE_URL = settings.POSTGRES_DATABASE_URL
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(POSTGRES_DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
